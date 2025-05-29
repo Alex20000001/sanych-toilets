@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card card-custom mb-4 animate-fade-in-up">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="bi bi-person-circle" style="font-size: 5rem; color: var(--primary-green);"></i>
+                        </div>
+                        <h4 class="mb-1">{{ current_user.username }}</h4>
+                        <p class="text-muted">{{ current_user.email }}</p>
+                        
+                        <div class="d-grid gap-2 mt-4">
+                            {% if current_user.is_business %}
+                                <a href="/business" class="btn btn-primary-custom">
+                                    <i class="bi bi-briefcase"></i> Панель управления
+                                </a>
+                            {% endif %}
+                            <a href="/logout" class="btn btn-outline-danger">
+                                <i class="bi bi-box-arrow-right"></i> Выйти
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Статистика -->
+                <div class="card card-custom animate-fade-in-up animation-delay-200">
+                    <div class="card-body">
+                        <h5 class="mb-3">Статистика</h5>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Всего посещений:</span>
+                            <strong>{{ visit_count }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Потрачено:</span>
+                            <strong>{{ total_spent }}₽</strong>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Активных QR:</span>
+                            <strong>{{ active_qr_count }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-8">
+                <!-- История посещений -->
+                <div class="card card-custom animate-fade-in-up animation-delay-300">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="bi bi-clock-history"></i> История посещений</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if visits %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Дата</th>
+                                            <th>Туалет</th>
+                                            <th>Адрес</th>
+                                            <th>Сумма</th>
+                                            <th>Статус</th>
+                                            <th>QR</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for visit in visits %}
+                                        <tr>
+                                            <td>{{ visit.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+                                            <td>{{ visit.toilet.name }}</td>
+                                            <td>
+                                                <small class="text-muted">
+                                                    <i class="bi bi-geo-alt"></i> {{ visit.toilet.address }}
+                                                </small>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-primary-custom">{{ visit.price }}₽</span>
+                                            </td>
+                                            <td>
+                                                {% if visit.is_active %}
+                                                    <span class="badge bg-success">Активен</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">Использован</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if visit.is_active %}
+                                                    <button class="btn btn-sm btn-primary-custom" onclick="showQR('{{ visit.qr_image }}', '{{ visit.expires_at }}')">
+                                                        <i class="bi bi-qr-code"></i>
+                                                    </button>
+                                                {% else %}
+                                                    -
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- Пагинация -->
+                            {% if total_pages > 1 %}
+                            <nav aria-label="Навигация по страницам">
+                                <ul class="pagination justify-content-center">
+                                    {% if page > 1 %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page - 1 }}">Предыдущая</a>
+                                    </li>
+                                    {% endif %}
+                                    
+                                    {% for p in range(1, total_pages + 1) %}
+                                        {% if p == page %}
+                                        <li class="page-item active">
+                                            <span class="page-link">{{ p }}</span>
+                                        </li>
+                                        {% else %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+                                        </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                    
+                                    {% if page < total_pages %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page + 1 }}">Следующая</a>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                            {% endif %}
+                        {% else %}
+                            <div class="text-center py-5">
+                                <i class="bi bi-inbox" style="font-size: 3rem; color: #ddd;"></i>
+                                <p class="text-muted mt-3">У вас пока нет посещений</p>
+                                <a href="/" class="btn btn-primary-custom">
+                                    <i class="bi bi-search"></i> Найти туалет
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Модальное окно для QR-кода -->
+<div class="modal fade" id="qrModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-qr-code"></i> Ваш QR-код для доступа</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="qrImage" src="" alt="QR Code" class="img-fluid mb-3" style="max-width: 300px;">
+                <p class="text-muted mb-2">Покажите этот код на входе</p>
+                <p class="text-danger fw-bold" id="expiresAt"></p>
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> Код действителен в течение 15 минут
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function showQR(qrImage, expiresAt) {
+        document.getElementById('qrImage').src = qrImage;
+        document.getElementById('expiresAt').textContent = 'Действителен до: ' + new Date(expiresAt).toLocaleString('ru-RU');
+        const modal = new bootstrap.Modal(document.getElementById('qrModal'));
+        modal.show();
+    }
+</script>
+
+<style>
+    .table {
+        font-size: 0.9rem;
+    }
+    
+    .pagination .page-link {
+        color: var(--primary-green);
+        border-color: #dee2e6;
+    }
+    
+    .pagination .page-item.active .page-link {
+        background-color: var(--primary-green);
+        border-color: var(--primary-green);
+    }
+    
+    .pagination .page-link:hover {
+        background-color: var(--light-gray);
+        border-color: var(--primary-green);
+    }
+</style>
+{% endblock %}

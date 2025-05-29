@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Саныч - Умные туалеты города</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary-green: #4ECDC4;
+            --dark-green: #2B7A78;
+            --light-gray: #F7F7F7;
+            --dark-gray: #2C3E50;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--dark-gray);
+            background-color: #FAFAFA;
+        }
+
+        /* Навигация */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--primary-green) !important;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--dark-gray) !important;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-green) !important;
+        }
+
+        /* Кнопки */
+        .btn-primary-custom {
+            background: var(--primary-green);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary-custom:hover {
+            background: var(--dark-green);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(78, 205, 196, 0.4);
+        }
+
+        .btn-secondary-custom {
+            background: transparent;
+            border: 2px solid var(--primary-green);
+            color: var(--primary-green);
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-secondary-custom:hover {
+            background: var(--primary-green);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Карточки */
+        .card-custom {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .card-custom:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+
+        /* Анимации появления */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Классы анимаций */
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .animate-fade-in-left {
+            animation: fadeInLeft 0.8s ease forwards;
+        }
+
+        .animate-fade-in-right {
+            animation: fadeInRight 0.8s ease forwards;
+        }
+
+        .animate-scale-in {
+            animation: scaleIn 0.8s ease forwards;
+        }
+
+        /* Задержки анимации */
+        .animation-delay-200 { animation-delay: 0.2s; }
+        .animation-delay-300 { animation-delay: 0.3s; }
+        .animation-delay-400 { animation-delay: 0.4s; }
+        .animation-delay-500 { animation-delay: 0.5s; }
+        .animation-delay-600 { animation-delay: 0.6s; }
+        .animation-delay-700 { animation-delay: 0.7s; }
+
+        /* Анимация bounce */
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .animate-bounce {
+            animation: bounce 2s infinite;
+        }
+
+        /* Анимация float */
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Анимация пульсации */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .animate-pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* Анимация при прокрутке */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .scroll-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Hover эффекты */
+        .hover-lift {
+            transition: all 0.3s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .hover-shine {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hover-shine::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .hover-shine:hover::before {
+            left: 100%;
+        }
+
+        /* Анимация для кнопок */
+        .btn-animated {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .btn-animated:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(78, 205, 196, 0.4);
+        }
+
+        /* Анимация для карточек */
+        .card-animated {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        <style>
+/* Альтернативная волновая анимация - более заметная */
+.wave-bg {
+    position: relative;
+    overflow: hidden;
+}
+
+.wave-bg::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, 
+        transparent 30%, 
+        rgba(255,255,255,0.4) 50%, 
+        transparent 70%
+    );
+    animation: wave-sweep 4s linear infinite;
+    z-index: 1;
+    pointer-events: none;
+}
+
+@keyframes wave-sweep {
+    0% {
+        transform: translateX(-100%) translateY(-100%) rotate(45deg);
+    }
+    100% {
+        transform: translateX(100%) translateY(100%) rotate(45deg);
+    }
+}
+
+/* Или вариант с множественными волнами */
+.wave-bg::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 100px,
+        rgba(255,255,255,0.15) 100px,
+        rgba(255,255,255,0.15) 200px
+    );
+    animation: wave-move 20s linear infinite;
+    z-index: 1;
+    pointer-events: none;
+}
+
+@keyframes wave-move {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(200px);
+    }
+}
+        /* Анимация градиента для текста */
+        .text-gradient-animated {
+            background: linear-gradient(45deg, var(--primary-green), var(--dark-green), var(--primary-green));
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientMove 3s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Отключаем анимации для карты */
+        #map {
+            transform: none !important;
+            transition: none !important;
+            animation: none !important;
+        }
+
+        .card-custom:has(#map) {
+            transform: none !important;
+            transition: none !important;
+        }
+
+        .card-custom:has(#map):hover {
+            transform: none !important;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.08) !important;
+        }
+
+        /* Секции */
+        .section-padding {
+            padding: 80px 0;
+        }
+
+        .bg-light-custom {
+            background: var(--light-gray);
+        }
+
+        /* Прочее */
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+
+        .bg-primary-custom {
+            background-color: var(--primary-green) !important;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark-gray);
+            color: white;
+            padding: 40px 0;
+            margin-top: 80px;
+        }
+
+        footer a {
+            color: var(--primary-green);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: white;
+        }
+
+        /* Анимация для счетчиков */
+        .counter {
+            display: inline-block;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Иконка bounce */
+        .icon-bounce {
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-geo-alt-fill"></i> Саныч
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Главная</a>
+                    </li>
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.is_business %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="/business">Панель управления</a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/profile">Профиль</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/logout">Выйти</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/login">Войти</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-primary-custom ms-2" href="/register">Регистрация</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Основной контент -->
+    <main style="margin-top: 80px;">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>О проекте</h5>
+                    <p class="text-white-50">Саныч - инновационная платформа для поиска и оплаты доступа к чистым городским туалетам.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5>Ссылки</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Для бизнеса</a></li>
+                        <li><a href="#">Поддержка</a></li>
+                        <li><a href="#">API</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5>Контакты</h5>
+                    <p class="text-white-50">
+                        <i class="bi bi-envelope"></i> info@sanych.ru<br>
+                        <i class="bi bi-phone"></i> +7 (800) 123-45-67
+                    </p>
+                </div>
+            </div>
+            <hr class="bg-white-50">
+            <div class="text-center text-white-50">
+                <small>&copy; 2024 Саныч. Все права защищены.</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <script>
+        // Активация анимаций при прокрутке
+        document.addEventListener('DOMContentLoaded', function() {
+            const reveals = document.querySelectorAll('.scroll-reveal');
+            
+            function reveal() {
+                reveals.forEach(element => {
+                    const windowHeight = window.innerHeight;
+                    const elementTop = element.getBoundingClientRect().top;
+                    const elementVisible = 150;
+                    
+                    if (elementTop < windowHeight - elementVisible) {
+                        element.classList.add('revealed');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', reveal);
+            reveal(); // Проверяем при загрузке
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

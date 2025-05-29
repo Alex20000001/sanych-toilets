@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Вход - Саныч{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow animate-fade-in-up">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <h1 class="display-1 text-primary-custom animate-bounce">
+                            <i class="bi bi-geo-alt-fill"></i>
+                        </h1>
+                        <h2 class="mb-0">Вход в Саныч</h2>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control form-control-custom" id="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Пароль</label>
+                        <input type="password" class="form-control form-control-custom" id="password" required>
+                    </div>
+                    <button type="button" class="btn btn-primary-custom w-100 btn-animated" onclick="doLogin()">Войти</button>
+                    <p class="text-center mt-3">
+                        Нет аккаунта? <a href="/register" class="text-primary-custom">Зарегистрироваться</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function doLogin() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const button = event.target;
+    
+    if (!email || !password) {
+        alert('Заполните все поля!');
+        return;
+    }
+    
+    button.disabled = true;
+    button.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Входим...';
+    
+    fetch('/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({email: email, password: password})
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            button.classList.add('btn-success');
+            button.innerHTML = '<i class="bi bi-check-circle"></i> Успешно!';
+            setTimeout(() => {
+                window.location.href = data.redirect || '/business';
+            }, 500);
+        } else {
+            button.innerHTML = 'Войти';
+            button.disabled = false;
+            alert(data.error || 'Неверные данные');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        button.innerHTML = 'Войти';
+        button.disabled = false;
+        alert('Ошибка соединения');
+    });
+}
+
+// Разрешаем вход по Enter
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('email').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') doLogin();
+    });
+    document.getElementById('password').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') doLogin();
+    });
+});
+</script>
+{% endblock %}
+
+{% block extra_js %}{% endblock %}

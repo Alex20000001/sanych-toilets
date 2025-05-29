@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Регистрация - Саныч{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow animate-fade-in-up">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <h1 class="display-1 text-primary-custom animate-bounce">
+                            <i class="bi bi-geo-alt-fill"></i>
+                        </h1>
+                        <h2 class="mb-0">Регистрация в Саныч</h2>
+                        <p class="text-muted mt-2">Присоединяйтесь к революции городского комфорта</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Имя пользователя</label>
+                        <input type="text" class="form-control form-control-custom" id="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control form-control-custom" id="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Пароль</label>
+                        <input type="password" class="form-control form-control-custom" id="password" required>
+                    </div>
+                    <div class="form-check mb-3 p-3 bg-light-custom rounded">
+                        <input class="form-check-input" type="checkbox" id="isBusiness">
+                        <label class="form-check-label" for="isBusiness">
+                            <strong>Я представляю бизнес</strong>
+                            <small class="d-block text-muted">Получите доступ к панели управления и аналитике</small>
+                        </label>
+                    </div>
+                    <button type="button" class="btn btn-primary-custom w-100 btn-animated" onclick="doRegister()">Зарегистрироваться</button>
+                    <p class="text-center mt-3">
+                        Уже есть аккаунт? <a href="/login" class="text-primary-custom">Войти</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function doRegister() {
+    const username = document.getElementById('username').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const isBusiness = document.getElementById('isBusiness').checked;
+    const button = event.target;
+    
+    if (!username || !email || !password) {
+        alert('Заполните все поля!');
+        return;
+    }
+    
+    button.disabled = true;
+    button.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Регистрация...';
+    
+    fetch('/register', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            username: username,
+            email: email,
+            password: password,
+            is_business: isBusiness
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            button.classList.add('btn-success');
+            button.innerHTML = '<i class="bi bi-check-circle"></i> Успешно!';
+            setTimeout(() => {
+                alert('Регистрация успешна! Теперь вы можете войти.');
+                window.location.href = '/login';
+            }, 1000);
+        } else {
+            button.innerHTML = 'Зарегистрироваться';
+            button.disabled = false;
+            alert(data.error || 'Ошибка регистрации');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        button.innerHTML = 'Зарегистрироваться';
+        button.disabled = false;
+        alert('Ошибка соединения');
+    });
+}
+</script>
+{% endblock %}
+
+{% block extra_js %}{% endblock %}

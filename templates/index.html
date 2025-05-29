@@ -1,0 +1,1178 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section wave-bg" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); padding: 4rem 0; margin-top: -120px; padding-top: 160px;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-light mb-4 animate-fade-in-up">
+                    Городской комфорт <br>
+                    <strong class="fw-bold text-gradient-animated">под вашим контролем</strong>
+                </h1>
+                <p class="lead text-muted mb-4 animate-fade-in-up animation-delay-200">
+                    Мгновенный доступ к чистым туалетам в любой точке города. 
+                    Оплачивайте онлайн и открывайте двери с помощью QR-кода.
+                </p>
+                
+                <div class="info-box p-4 mb-4 animate-fade-in-up animation-delay-300 hover-lift" style="background: var(--dark-gray); color: white;">
+                    <h3 class="h5 mb-2">🚀 Пилотный проект в Сочи</h3>
+                    <p class="mb-0">Присоединяйтесь к революции городского комфорта</p>
+                </div>
+
+                <div class="d-flex gap-3 flex-wrap animate-fade-in-up animation-delay-400">
+                    <button class="btn btn-primary-custom btn-animated hover-shine" onclick="showFilters()">
+                        <i class="bi bi-search icon-bounce"></i> НАЙТИ ТУАЛЕТ
+                    </button>
+                    <a href="#" class="btn btn-secondary-custom btn-animated hover-shine">
+                        <i class="bi bi-download icon-bounce"></i> СКАЧАТЬ ПРИЛОЖЕНИЕ
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="position-relative animate-fade-in-right animation-delay-500">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 400'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%234ECDC4;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%232B7A78;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='600' height='400' fill='%23f8f9fa'/%3E%3Cg transform='translate(300,200)'%3E%3Ccircle r='150' fill='url(%23grad)' opacity='0.1'/%3E%3Ccircle r='100' fill='url(%23grad)' opacity='0.2'/%3E%3Cpath d='M-30,-60 Q-30,-30 0,-30 Q30,-30 30,-60 Q30,-90 0,-120 Q-30,-90 -30,-60' fill='white' transform='scale(1.5)'/%3E%3Ccircle cx='0' cy='-30' r='20' fill='%234ECDC4'/%3E%3C/g%3E%3Ctext x='300' y='350' text-anchor='middle' font-family='Arial' font-size='24' fill='%232C3E50'>Умный город начинается здесь</text%3E%3C/svg%3E" 
+                         alt="Саныч - умные туалеты" class="img-fluid animate-float parallax-element" data-speed="0.5">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Основной контент -->
+<section class="section-padding">
+    <div class="container">
+        <!-- Фильтры -->
+        <div class="filter-section mb-4" id="filterSection" style="display: none;">
+            <h4 class="mb-4">Настройте поиск</h4>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label fw-bold text-uppercase" style="font-size: 0.875rem; letter-spacing: 1px;">Цена</label>
+                    <div class="d-flex gap-2">
+                        <input type="number" class="form-control form-control-custom" id="minPrice" placeholder="От">
+                        <input type="number" class="form-control form-control-custom" id="maxPrice" placeholder="До">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold text-uppercase" style="font-size: 0.875rem; letter-spacing: 1px;">Рейтинг</label>
+                    <select class="form-select form-control-custom" id="minRating">
+                        <option value="">Любой</option>
+                        <option value="4">4+ ⭐</option>
+                        <option value="4.5">4.5+ ⭐</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold text-uppercase" style="font-size: 0.875rem; letter-spacing: 1px;">Особенности</label>
+                    <div class="form-check mt-2">
+                        <input class="form-check-input" type="checkbox" id="isAccessible">
+                        <label class="form-check-label" for="isAccessible">
+                            <i class="bi bi-universal-access-circle"></i> Доступно для инвалидов
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button class="btn btn-primary-custom w-100" onclick="applyFilters()">
+                        ПРИМЕНИТЬ ФИЛЬТРЫ
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Карта -->
+            <div class="col-lg-8 mb-4">
+                <div class="card card-custom">
+                    <div class="card-header bg-dark text-white py-3">
+                        <h5 class="mb-0"><i class="bi bi-map"></i> Карта туалетов</h5>
+                    </div>
+                    <div id="map" style="width: 100%; height: 600px;"></div>
+                </div>
+            </div>
+            
+            <!-- Список туалетов -->
+            <div class="col-lg-4">
+                <div class="d-flex justify-content-between align-items-center mb-3 scroll-reveal">
+                    <h5 class="mb-0">Доступные туалеты</h5>
+                    <span class="badge bg-primary-custom counter" data-target="0" id="toiletCount">0</span>
+                </div>
+                <div id="toiletsList" style="max-height: 600px; overflow-y: auto;">
+                    <!-- Туалеты будут загружены сюда -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Секция преимуществ -->
+<section class="bg-light-custom section-padding">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Почему выбирают Саныч?</h2>
+            <p class="lead text-muted">Современное решение для базовых потребностей</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4 scroll-reveal">
+                <div class="text-center hover-lift">
+                    <div class="mb-3 animate-bounce" style="font-size: 3rem; color: var(--primary-green);">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <h4>Экономия времени</h4>
+                    <p class="text-muted">Больше не нужно искать туалет часами. Найдите ближайший за секунды.</p>
+                </div>
+            </div>
+            <div class="col-md-4 scroll-reveal animation-delay-200">
+                <div class="text-center hover-lift">
+                    <div class="mb-3 animate-bounce" style="font-size: 3rem; color: var(--primary-green);">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h4>Безопасность</h4>
+                    <p class="text-muted">Только проверенные заведения с гарантией чистоты и безопасности.</p>
+                </div>
+            </div>
+            <div class="col-md-4 scroll-reveal animation-delay-400">
+                <div class="text-center hover-lift">
+                    <div class="mb-3 animate-bounce" style="font-size: 3rem; color: var(--primary-green);">
+                        <i class="bi bi-phone"></i>
+                    </div>
+                    <h4>Удобство</h4>
+                    <p class="text-muted">Оплата онлайн, QR-код для входа. Всё в вашем смартфоне.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Секция для бизнеса -->
+<section class="section-padding" style="background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%); color: white; position: relative; overflow: hidden;">
+    <div class="particles-bg"></div>
+    <div class="container position-relative">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <h2 class="display-5 fw-bold mb-4 animate-fade-in-left">
+                    Превратите туалет в источник дохода
+                </h2>
+                <p class="lead mb-4 animate-fade-in-left animation-delay-200">
+                    Монетизируйте неиспользуемый потенциал вашего заведения. 
+                    Наша платформа поможет превратить обычный туалет в стабильный источник дополнительного дохода.
+                </p>
+                
+                <div class="row g-3 mb-4">
+                    <div class="col-sm-6 animate-fade-in-up animation-delay-300">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-check-circle-fill fs-4 me-3"></i>
+                            <span>Установка за 1 день</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 animate-fade-in-up animation-delay-400">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-check-circle-fill fs-4 me-3"></i>
+                            <span>Без затрат на персонал</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 animate-fade-in-up animation-delay-500">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-check-circle-fill fs-4 me-3"></i>
+                            <span>Автоматическая оплата</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 animate-fade-in-up animation-delay-600">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-check-circle-fill fs-4 me-3"></i>
+                            <span>Новые клиенты</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="animate-fade-in-up animation-delay-700">
+                    <a href="/register" class="btn btn-light btn-lg px-4 py-3 fw-bold hover-lift">
+                        СТАТЬ ПАРТНЁРОМ
+                    </a>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="bg-white text-dark p-4 rounded-3 shadow-lg animate-scale-in animation-delay-300">
+                    <h3 class="h4 mb-4 text-center">
+                        <i class="bi bi-calculator text-primary-custom"></i> 
+                        Калькулятор прибыли
+                    </h3>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Проходимость в день:</label>
+                        <input type="range" class="form-range" id="visitorsRange" min="50" max="500" value="200" oninput="calculateProfit()">
+                        <div class="d-flex justify-content-between">
+                            <small>50</small>
+                            <span class="fw-bold text-primary-custom" id="visitorsValue">200</span>
+                            <small>500</small>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Цена за использование (₽):</label>
+                        <input type="range" class="form-range" id="priceRange" min="20" max="100" value="50" step="10" oninput="calculateProfit()">
+                        <div class="d-flex justify-content-between">
+                            <small>20₽</small>
+                            <span class="fw-bold text-primary-custom" id="priceValue">50₽</span>
+                            <small>100₽</small>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Конверсия (% от проходимости):</label>
+                        <input type="range" class="form-range" id="conversionRange" min="5" max="30" value="15" oninput="calculateProfit()">
+                        <div class="d-flex justify-content-between">
+                            <small>5%</small>
+                            <span class="fw-bold text-primary-custom" id="conversionValue">15%</span>
+                            <small>30%</small>
+                        </div>
+                    </div>
+                    
+                    <div class="results-box p-4 rounded" style="background: #f8f9fa;">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="mb-2">
+                                    <small class="text-muted">В день</small>
+                                </div>
+                                <h4 class="fw-bold text-primary-custom mb-0">
+                                    <span id="dailyProfit">1,500</span>₽
+                                </h4>
+                            </div>
+                            <div class="col-4">
+                                <div class="mb-2">
+                                    <small class="text-muted">В месяц</small>
+                                </div>
+                                <h4 class="fw-bold text-primary-custom mb-0">
+                                    <span id="monthlyProfit">45,000</span>₽
+                                </h4>
+                            </div>
+                            <div class="col-4">
+                                <div class="mb-2">
+                                    <small class="text-muted">В год</small>
+                                </div>
+                                <h4 class="fw-bold text-success mb-0">
+                                    <span id="yearlyProfit">540,000</span>₽
+                                </h4>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-3">
+                        
+                        <div class="text-center">
+                            <small class="text-muted">При комиссии платформы 20%</small>
+                            <h5 class="mt-2 mb-0">
+                                Ваша чистая прибыль в год: 
+                                <span class="fw-bold text-success" id="netProfit">432,000</span>₽
+                            </h5>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info mt-3 mb-0">
+                        <i class="bi bi-info-circle"></i>
+                        <small>Расчёт основан на средних показателях наших партнёров в Сочи</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Статистика -->
+        <div class="row mt-5 pt-5 text-center">
+            <div class="col-md-3 mb-4 scroll-reveal">
+                <h2 class="display-4 fw-bold counter" data-target="127">0</h2>
+                <p class="text-white-50">Партнёров в Сочи</p>
+            </div>
+            <div class="col-md-3 mb-4 scroll-reveal animation-delay-200">
+                <h2 class="display-4 fw-bold counter" data-target="85000">0</h2>
+                <p class="text-white-50">Транзакций в месяц</p>
+            </div>
+            <div class="col-md-3 mb-4 scroll-reveal animation-delay-400">
+                <h2 class="display-4 fw-bold"><span class="counter" data-target="35">0</span>%</h2>
+                <p class="text-white-50">Рост трафика партнёров</p>
+            </div>
+            <div class="col-md-3 mb-4 scroll-reveal animation-delay-600">
+                <h2 class="display-4 fw-bold"><span class="counter" data-target="24">0</span>/7</h2>
+                <p class="text-white-50">Поддержка</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Кейсы успеха -->
+<section class="section-padding">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Истории успеха наших партнёров</h2>
+            <p class="lead text-muted">Реальные результаты от реальных заведений</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4 scroll-reveal">
+                <div class="card h-100 shadow-sm hover-lift">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Ccircle cx='30' cy='30' r='30' fill='%23e3f2fd'/%3E%3Ctext x='30' y='35' text-anchor='middle' font-size='20' fill='%232196f3'%3E☕%3C/text%3E%3C/svg%3E" 
+                                 alt="Кофейня" class="me-3">
+                            <div>
+                                <h5 class="mb-0">Кофейня "Аромат"</h5>
+                                <small class="text-muted">Центр города</small>
+                            </div>
+                        </div>
+                        <p class="text-muted mb-3">
+                            "За 3 месяца работы с Саныч мы получили дополнительно 180,000₽ дохода. 
+                            Это позволило нам обновить оборудование в кофейне."
+                        </p>
+                        <div class="d-flex justify-content-between text-center">
+                            <div>
+                                <h6 class="mb-0 text-primary-custom">+60,000₽</h6>
+                                <small class="text-muted">в месяц</small>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 text-primary-custom">+40%</h6>
+                                <small class="text-muted">новых клиентов</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 scroll-reveal animation-delay-200">
+                <div class="card h-100 shadow-sm hover-lift">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Ccircle cx='30' cy='30' r='30' fill='%23fff3e0'/%3E%3Ctext x='30' y='35' text-anchor='middle' font-size='20' fill='%23ff9800'%3E🍕%3C/text%3E%3C/svg%3E" 
+                                 alt="Ресторан" class="me-3">
+                            <div>
+                                <h5 class="mb-0">Ресторан "У моря"</h5>
+                                <small class="text-muted">Набережная</small>
+                            </div>
+                        </div>
+                        <p class="text-muted mb-3">
+                            "Неожиданный источник дохода! Раньше туалет был только затратами, 
+                            теперь он приносит прибыль и новых посетителей."
+                        </p>
+                        <div class="d-flex justify-content-between text-center">
+                            <div>
+                                <h6 class="mb-0 text-primary-custom">+45,000₽</h6>
+                                <small class="text-muted">в месяц</small>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 text-primary-custom">300+</h6>
+                                <small class="text-muted">визитов/день</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 scroll-reveal animation-delay-400">
+                <div class="card h-100 shadow-sm hover-lift">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Ccircle cx='30' cy='30' r='30' fill='%23f3e5f5'/%3E%3Ctext x='30' y='35' text-anchor='middle' font-size='20' fill='%239c27b0'%3E🛍️%3C/text%3E%3C/svg%3E" 
+                                 alt="ТЦ" class="me-3">
+                            <div>
+                                <h5 class="mb-0">ТЦ "Галерея"</h5>
+                                <small class="text-muted">3 точки</small>
+                            </div>
+                        </div>
+                        <p class="text-muted mb-3">
+                            "Установили систему на всех этажах. Окупаемость - 2 месяца. 
+                            Планируем расширение на другие наши ТЦ."
+                        </p>
+                        <div class="d-flex justify-content-between text-center">
+                            <div>
+                                <h6 class="mb-0 text-primary-custom">+150,000₽</h6>
+                                <small class="text-muted">в месяц</small>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 text-primary-custom">4.8 ⭐</h6>
+                                <small class="text-muted">рейтинг</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Секция технологии (добавить после секции "Кейсы успеха") -->
+<section class="section-padding bg-light-custom">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Технология, которая работает</h2>
+            <p class="lead text-muted">Надежное оборудование от мировых производителей</p>
+        </div>
+        
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <div class="position-relative">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 500'%3E%3Cdefs%3E%3ClinearGradient id='techGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%234ECDC4;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%232B7A78;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='600' height='500' fill='%23f8f9fa'/%3E%3C!-- Корпус замка --%3E%3Crect x='150' y='100' width='300' height='200' fill='%23333' rx='10'/%3E%3Crect x='160' y='110' width='280' height='180' fill='%23555' rx='5'/%3E%3C!-- Магнитная пластина --%3E%3Crect x='200' y='150' width='200' height='100' fill='url(%23techGrad)' rx='5'/%3E%3C!-- QR сканер --%3E%3Crect x='250' y='320' width='100' height='120' fill='%23222' rx='5'/%3E%3Crect x='265' y='335' width='70' height='70' fill='%23000'/%3E%3C!-- QR код --%3E%3Cg transform='translate(300,370)'%3E%3Crect x='-25' y='-25' width='50' height='50' fill='white'/%3E%3Cpath d='M-20,-20 h10 v10 h-10 z M0,-20 h10 v10 h-10 z M-20,0 h10 v10 h-10 z M10,10 h10 v10 h-10 z M-10,-10 h10 v10 h-10 z' fill='black'/%3E%3C/g%3E%3C!-- Провода --%3E%3Cpath d='M350,250 Q400,250 400,370 L350,370' stroke='%23666' stroke-width='3' fill='none'/%3E%3Cpath d='M250,250 Q200,250 200,370 L250,370' stroke='%23666' stroke-width='3' fill='none'/%3E%3C!-- Текст --%3E%3Ctext x='300' y='50' text-anchor='middle' font-family='Arial' font-size='24' font-weight='bold' fill='%232C3E50'%3EMENGQI-CONTROL System%3C/text%3E%3C/svg%3E" 
+                         alt="MENGQI-CONTROL QR Access System" class="img-fluid rounded shadow-lg hover-lift">
+                    
+                    <!-- Плавающие элементы -->
+                    <div class="position-absolute top-0 start-0 mt-4 ms-4 animate-float">
+                        <span class="badge bg-success p-3 shadow">
+                            <i class="bi bi-shield-check fs-4"></i>
+                        </span>
+                    </div>
+                    <div class="position-absolute bottom-0 end-0 mb-4 me-4 animate-float animation-delay-200">
+                        <span class="badge bg-primary-custom p-3 shadow">
+                            <i class="bi bi-qr-code fs-4"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="ps-lg-5">
+                    <h3 class="h2 mb-4">MENGQI-CONTROL QR Code Access Control Kit</h3>
+                    
+                    <p class="lead mb-4">
+                        Профессиональная система контроля доступа с поддержкой QR-кодов, 
+                        которая обеспечивает безопасность и удобство для ваших клиентов.
+                    </p>
+                    
+                    <div class="mb-4">
+                        <h5 class="mb-3">Что входит в комплект:</h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <strong>QR-код ридер 2D</strong> - считывает коды с экранов телефонов
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <strong>Магнитный замок 600lbs (272кг)</strong> - надежная фиксация двери
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <strong>TCP/IP контроллер</strong> - удаленное управление через интернет
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <strong>Блок питания 110-240V</strong> - универсальное питание
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <strong>Мобильное приложение</strong> - для iOS и Android
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <strong>ПО управления</strong> - до 20,000 пользователей
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="row g-3 mb-4">
+                        <div class="col-sm-6">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="icon-box bg-primary-custom text-white">
+                                        <i class="bi bi-lightning-fill"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="mb-0">Быстрый отклик</h6>
+                                    <small class="text-muted">0.2 сек на считывание</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="icon-box bg-primary-custom text-white">
+                                        <i class="bi bi-database-fill"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="mb-0">Большая память</h6>
+                                    <small class="text-muted">100,000 записей</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Цены -->
+                    <div class="pricing-box p-4 rounded-3 bg-white shadow-sm mb-4">
+                        <h5 class="mb-3">Стоимость внедрения:</h5>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="text-center p-3 border-end">
+                                    <h4 class="text-primary-custom mb-1">15,000₽</h4>
+                                    <small class="text-muted">Оборудование</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-center p-3">
+                                    <h4 class="text-primary-custom mb-1">10,000₽</h4>
+                                    <small class="text-muted">Установка и настройка</small>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="text-center">
+                            <h3 class="text-success mb-0">25,000₽</h3>
+                            <small class="text-muted">Полная стоимость "под ключ"</small>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-success d-flex align-items-center">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        <div>
+                            <strong>Окупаемость: 1-2 месяца</strong><br>
+                            <small>При средней проходимости 200 человек/день</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Технические преимущества -->
+        <div class="row mt-5 g-4">
+            <div class="col-md-3 text-center scroll-reveal">
+                <div class="feature-icon mb-3">
+                    <i class="bi bi-water display-4 text-primary-custom"></i>
+                </div>
+                <h5>Влагозащита IP65</h5>
+                <p class="text-muted small">Подходит для уличной установки</p>
+            </div>
+            <div class="col-md-3 text-center scroll-reveal animation-delay-200">
+                <div class="feature-icon mb-3">
+                    <i class="bi bi-thermometer-snow display-4 text-primary-custom"></i>
+                </div>
+                <h5>-40°C до +60°C</h5>
+                <p class="text-muted small">Работает в любых условиях</p>
+            </div>
+            <div class="col-md-3 text-center scroll-reveal animation-delay-400">
+                <div class="feature-icon mb-3">
+                    <i class="bi bi-wifi display-4 text-primary-custom"></i>
+                </div>
+                <h5>Удаленный доступ</h5>
+                <p class="text-muted small">Управление через интернет</p>
+            </div>
+            <div class="col-md-3 text-center scroll-reveal animation-delay-600">
+                <div class="feature-icon mb-3">
+                    <i class="bi bi-tools display-4 text-primary-custom"></i>
+                </div>
+                <h5>Простая установка</h5>
+                <p class="text-muted small">Монтаж за 2-3 часа</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Секция процесса установки -->
+<section class="section-padding">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Как происходит установка?</h2>
+            <p class="lead text-muted">От заявки до запуска - всего 3 дня</p>
+        </div>
+        
+        <div class="timeline">
+            <div class="timeline-item scroll-reveal">
+                <div class="timeline-marker">1</div>
+                <div class="timeline-content">
+                    <h5>Заявка и консультация</h5>
+                    <p class="text-muted">Выезд специалиста, оценка объекта, подбор оптимального места установки</p>
+                    <small class="text-primary-custom">День 1</small>
+                </div>
+            </div>
+            
+            <div class="timeline-item scroll-reveal animation-delay-200">
+                <div class="timeline-marker">2</div>
+                <div class="timeline-content">
+                    <h5>Монтаж оборудования</h5>
+                    <p class="text-muted">Установка замка, считывателя, прокладка кабелей, подключение питания</p>
+                    <small class="text-primary-custom">День 2</small>
+                </div>
+            </div>
+            
+            <div class="timeline-item scroll-reveal animation-delay-400">
+                <div class="timeline-marker">3</div>
+                <div class="timeline-content">
+                    <h5>Настройка и интеграция</h5>
+                    <p class="text-muted">Подключение к платформе Саныч, тестирование, обучение персонала</p>
+                    <small class="text-primary-custom">День 3</small>
+                </div>
+            </div>
+            
+            <div class="timeline-item scroll-reveal animation-delay-600">
+                <div class="timeline-marker">✓</div>
+                <div class="timeline-content">
+                    <h5>Запуск и поддержка</h5>
+                    <p class="text-muted">Начало работы, техническая поддержка 24/7, гарантия 2 года</p>
+                    <small class="text-success">Готово к работе!</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-5">
+            <a href="/register" class="btn btn-primary-custom btn-lg px-5 py-3 fw-bold hover-lift">
+                <i class="bi bi-rocket-takeoff me-2"></i> НАЧАТЬ ЗАРАБАТЫВАТЬ
+            </a>
+        </div>
+    </div>
+</section>
+
+<style>
+    .icon-box {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+    
+    .pricing-box {
+        border: 2px solid #e0e0e0;
+        transition: all 0.3s ease;
+    }
+    
+    .pricing-box:hover {
+        border-color: var(--primary-green);
+        transform: translateY(-5px);
+    }
+    
+    .feature-icon {
+        transition: transform 0.3s ease;
+    }
+    
+    .feature-icon:hover {
+        transform: scale(1.1) rotate(5deg);
+    }
+    
+    /* Timeline стили */
+    .timeline {
+        position: relative;
+        padding: 2rem 0;
+    }
+    
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: #e0e0e0;
+        transform: translateX(-50%);
+    }
+    
+    .timeline-item {
+        position: relative;
+        margin-bottom: 3rem;
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    
+    .timeline-item.revealed {
+        animation: fadeInUp 0.6s ease forwards;
+    }
+    
+    .timeline-marker {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 50px;
+        height: 50px;
+        background: var(--primary-green);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.25rem;
+        box-shadow: 0 3px 15px rgba(78, 205, 196, 0.4);
+        z-index: 1;
+    }
+    
+    .timeline-content {
+        width: 45%;
+        padding: 1.5rem;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+    }
+    
+    .timeline-item:nth-child(odd) .timeline-content {
+        margin-left: auto;
+        text-align: left;
+    }
+    
+    .timeline-item:nth-child(even) .timeline-content {
+        margin-right: auto;
+        text-align: right;
+    }
+    
+    @media (max-width: 768px) {
+        .timeline::before {
+            left: 30px;
+        }
+        
+        .timeline-marker {
+            left: 30px;
+        }
+        
+        .timeline-content {
+            width: calc(100% - 80px);
+            margin-left: 80px !important;
+            text-align: left !important;
+        }
+    }
+    
+    /* Анимация плавающих элементов */
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-20px);
+        }
+    }
+    
+    .animate-float {
+        animation: float 3s ease-in-out infinite;
+    }
+    
+    /* Text gradient animation */
+    .text-gradient-animated {
+        background: linear-gradient(45deg, #4ECDC4, #2B7A78, #4ECDC4);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradientShift 3s ease infinite;
+    }
+    
+    @keyframes gradientShift {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+</style>
+<!-- Модальное окно для QR-кода -->
+<div class="modal fade" id="qrModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-qr-code"></i> Ваш QR-код для доступа</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="qrImage" src="" alt="QR Code" class="img-fluid mb-3" style="max-width: 300px;">
+                <p class="text-muted mb-2">Покажите этот код на входе</p>
+                <p class="text-danger fw-bold" id="expiresAt"></p>
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> Код действителен в течение 15 минут
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Подключаем API Яндекс.Карт -->
+<script src="https://api-maps.yandex.ru/2.1/?apikey=YOUR_API_KEY&lang=ru_RU" type="text/javascript"></script>
+
+<script>
+    let myMap;
+    let placemarks = [];
+    let toilets = [];
+
+    // Показать/скрыть фильтры
+    function showFilters() {
+        const filterSection = document.getElementById('filterSection');
+        filterSection.style.display = filterSection.style.display === 'none' ? 'block' : 'none';
+        if (filterSection.style.display === 'block') {
+            filterSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    // Инициализация карты
+    function initMap() {
+        ymaps.ready(function () {
+            myMap = new ymaps.Map("map", {
+                center: [43.5858, 39.7203],
+                zoom: 13,
+                controls: ['zoomControl', 'fullscreenControl', 'geolocationControl']
+            });
+
+            // Добавляем контрол поиска
+            myMap.controls.add('searchControl', {
+                float: 'left'
+            });
+
+            // Добавляем контрол типа карты
+            myMap.controls.add('typeSelector');
+
+            loadToilets();
+        });
+    }
+
+    // Загрузка туалетов
+    function loadToilets() {
+        const params = new URLSearchParams();
+        
+        const minPrice = document.getElementById('minPrice').value;
+        const maxPrice = document.getElementById('maxPrice').value;
+        const minRating = document.getElementById('minRating').value;
+        const isAccessible = document.getElementById('isAccessible').checked;
+        
+        if (minPrice) params.append('min_price', minPrice);
+        if (maxPrice) params.append('max_price', maxPrice);
+        if (minRating) params.append('min_rating', minRating);
+        if (isAccessible) params.append('is_accessible', isAccessible);
+        
+        fetch('/api/toilets?' + params.toString())
+            .then(response => response.json())
+            .then(data => {
+                toilets = data;
+                updateMap();
+                updateList();
+                document.getElementById('toiletCount').textContent = toilets.length;
+            })
+            .catch(error => {
+                console.error('Ошибка загрузки туалетов:', error);
+            });
+    }
+
+    // Обновление маркеров на карте
+    function updateMap() {
+        if (!myMap) return;
+
+        // Удаляем старые метки
+        placemarks.forEach(placemark => myMap.geoObjects.remove(placemark));
+        placemarks = [];
+
+        // Создаем коллекцию для группировки меток
+        const collection = new ymaps.GeoObjectCollection();
+
+        toilets.forEach(toilet => {
+            const placemark = new ymaps.Placemark([toilet.latitude, toilet.longitude], {
+                balloonContentHeader: `<strong>${toilet.name}</strong>`,
+                balloonContentBody: `
+                    <p><i class="bi bi-geo-alt"></i> ${toilet.address}</p>
+                    <p>
+                        <span style="background: #4ECDC4; color: white; padding: 4px 12px; border-radius: 20px; font-weight: bold;">${toilet.price}₽</span>
+                        <span style="color: #FFA500; font-weight: bold; margin-left: 8px;">⭐ ${toilet.rating}</span>
+                    </p>
+                    ${toilet.description ? `<p style="font-size: 14px; color: #666;">${toilet.description}</p>` : ''}
+                    <div style="margin-top: 10px;">
+                        ${toilet.has_soap ? '<span style="margin-right: 8px;">🧼</span>' : ''}
+                        ${toilet.has_paper ? '<span style="margin-right: 8px;">🧻</span>' : ''}
+                        ${toilet.has_dryer ? '<span style="margin-right: 8px;">💨</span>' : ''}
+                        ${toilet.has_mirror ? '<span>🪞</span>' : ''}
+                    </div>
+                    <button class="btn btn-sm btn-primary-custom w-100 mt-3" onclick="payForToilet(${toilet.id})">
+                        Оплатить доступ
+                    </button>
+                `,
+                hintContent: toilet.name
+            }, {
+                preset: 'islands#greenCircleDotIcon',
+                iconColor: '#4ECDC4'
+            });
+            
+            collection.add(placemark);
+            placemarks.push(placemark);
+        });
+
+        myMap.geoObjects.add(collection);
+
+        // Автоматически подстраиваем область видимости
+        if (toilets.length > 0) {
+            myMap.setBounds(collection.getBounds(), {
+                checkZoomRange: true,
+                zoomMargin: 40
+            });
+        }
+    }
+
+    // Обновление списка туалетов
+    function updateList() {
+        const listHtml = toilets.map((toilet, index) => `
+            <div class="toilet-card hover-lift" style="animation: fadeInUp 0.6s ease ${index * 0.1}s forwards;">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h6 class="fw-bold mb-0">${toilet.name}</h6>
+                    ${toilet.is_accessible ? '<i class="bi bi-universal-access-circle text-primary-custom" title="Доступно для инвалидов"></i>' : ''}
+                </div>
+                <p class="text-muted small mb-2">
+                    <i class="bi bi-geo-alt"></i> ${toilet.address}
+                </p>
+                <div class="mb-2">
+                    ${toilet.has_soap ? '<span class="badge bg-light text-dark me-1">🧼 Мыло</span>' : ''}
+                    ${toilet.has_paper ? '<span class="badge bg-light text-dark me-1">🧻 Бумага</span>' : ''}
+                    ${toilet.has_dryer ? '<span class="badge bg-light text-dark me-1">💨 Сушилка</span>' : ''}
+                    ${toilet.has_mirror ? '<span class="badge bg-light text-dark">🪞 Зеркало</span>' : ''}
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="price-badge">${toilet.price}₽</span>
+                        <span class="rating ms-2">⭐ ${toilet.rating}</span>
+                    </div>
+                    <button class="btn btn-sm btn-primary-custom" onclick="payForToilet(${toilet.id})">
+                        Оплатить
+                    </button>
+                </div>
+            </div>
+        `).join('');
+        
+        document.getElementById('toiletsList').innerHTML = listHtml || '<p class="text-muted text-center">Туалеты не найдены</p>';
+        
+        // Анимация счетчика
+        animateCounter(document.getElementById('toiletCount'));
+    }
+
+    // Оплата доступа
+    function payForToilet(toiletId) {
+        {% if current_user.is_authenticated %}
+            fetch('/api/visits', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ toilet_id: toiletId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.qr_image) {
+                    document.getElementById('qrImage').src = data.qr_image;
+                    document.getElementById('expiresAt').textContent = 'Действителен до: ' + new Date(data.expires_at).toLocaleString('ru-RU');
+                    const modal = new bootstrap.Modal(document.getElementById('qrModal'));
+                    modal.show();
+                }
+            })
+            .catch(error => {
+                alert('Ошибка при оплате. Попробуйте еще раз.');
+            });
+        {% else %}
+            if (confirm('Для оплаты необходимо войти в систему. Перейти к входу?')) {
+                window.location.href = '/login';
+            }
+        {% endif %}
+    }
+
+    // Применение фильтров
+    function applyFilters() {
+        loadToilets();
+    }
+
+    // Калькулятор прибыли для бизнеса
+    function calculateProfit() {
+        const visitorsRange = document.getElementById('visitorsRange');
+        const priceRange = document.getElementById('priceRange');
+        const conversionRange = document.getElementById('conversionRange');
+        
+        if (!visitorsRange || !priceRange || !conversionRange) return;
+        
+        const visitors = parseInt(visitorsRange.value);
+        const price = parseInt(priceRange.value);
+        const conversion = parseInt(conversionRange.value);
+        
+        // Обновляем отображаемые значения
+        document.getElementById('visitorsValue').textContent = visitors;
+        document.getElementById('priceValue').textContent = price + '₽';
+        document.getElementById('conversionValue').textContent = conversion + '%';
+        
+        // Расчёт прибыли
+        const dailyVisits = Math.floor(visitors * (conversion / 100));
+        const dailyProfit = dailyVisits * price;
+        const monthlyProfit = dailyProfit * 30;
+        const yearlyProfit = monthlyProfit * 12;
+        const netProfit = Math.floor(yearlyProfit * 0.8); // После комиссии 20%
+        
+        // Анимированное обновление значений
+        animateValue('dailyProfit', dailyProfit);
+        animateValue('monthlyProfit', monthlyProfit);
+        animateValue('yearlyProfit', yearlyProfit);
+        animateValue('netProfit', netProfit);
+    }
+
+    // Анимация изменения числовых значений
+    function animateValue(id, end) {
+        const element = document.getElementById(id);
+        if (!element) return;
+        
+        const start = parseInt(element.textContent.replace(/,/g, '').replace(/[^\d]/g, '')) || 0;
+        const duration = 500;
+        const startTime = performance.now();
+        
+        function update(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            const current = Math.floor(start + (end - start) * easeOutQuad(progress));
+            element.textContent = current.toLocaleString('ru-RU');
+            
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            }
+        }
+        
+        function easeOutQuad(t) {
+            return t * (2 - t);
+        }
+        
+        requestAnimationFrame(update);
+    }
+
+    // Функция анимации счетчика
+    function animateCounter(counter) {
+        const target = parseInt(counter.getAttribute('data-target'));
+        const duration = 1000;
+        const step = target / (duration / 16);
+        let current = 0;
+        
+        const updateCounter = () => {
+            current += step;
+            if (current < target) {
+                counter.textContent = Math.floor(current);
+                requestAnimationFrame(updateCounter);
+            } else {
+                counter.textContent = target;
+            }
+        };
+        
+        updateCounter();
+    }
+
+    // Инициализация при загрузке страницы
+    document.addEventListener('DOMContentLoaded', function() {
+        initMap();
+        
+        // Инициализация калькулятора
+        if (document.getElementById('visitorsRange')) {
+            calculateProfit();
+        }
+        
+        // Наблюдатель для анимации счетчиков
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counter = entry.target;
+                    if (!counter.classList.contains('animated')) {
+                        counter.classList.add('animated');
+                        animateCounter(counter);
+                    }
+                }
+            });
+        });
+        
+        // Наблюдаем за всеми счетчиками
+        document.querySelectorAll('.counter').forEach(counter => {
+            observer.observe(counter);
+        });
+        
+        // Активация анимаций при прокрутке для элементов страницы
+        const scrollElements = document.querySelectorAll('.scroll-reveal');
+        
+        const elementInView = (el, dividend = 1) => {
+            const elementTop = el.getBoundingClientRect().top;
+            return (
+                elementTop <= (window.innerHeight || document.documentElement.clientHeight) / dividend
+            );
+        };
+        
+        const displayScrollElement = (element) => {
+            element.classList.add('revealed');
+        };
+        
+        const handleScrollAnimation = () => {
+            scrollElements.forEach((el) => {
+                if (elementInView(el, 1.25)) {
+                    displayScrollElement(el);
+                }
+            });
+        };
+        
+        window.addEventListener('scroll', () => {
+            handleScrollAnimation();
+        });
+        
+        // Проверяем при загрузке
+        handleScrollAnimation();
+        
+        // Анимация для иконок в кнопках
+        const iconBounce = document.querySelectorAll('.icon-bounce');
+        iconBounce.forEach(icon => {
+            icon.style.display = 'inline-block';
+            icon.style.animation = 'bounce 2s infinite';
+        });
+    });
+</script>
+
+<style>
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .toilet-card {
+        background: white;
+        padding: 1.25rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        opacity: 0;
+    }
+
+    .toilet-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    }
+
+    .price-badge {
+        background: #4ECDC4;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 0.875rem;
+    }
+
+    .rating {
+        color: #FFA500;
+        font-weight: bold;
+    }
+
+    .btn-primary-custom {
+        background: #4ECDC4;
+        border: none;
+        color: white;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary-custom:hover {
+        background: #2B7A78;
+        transform: scale(1.05);
+        color: white;
+    }
+
+    /* Стили для балуна Яндекс.Карт */
+    .ymaps-2-1-79-balloon__content {
+        padding: 10px !important;
+    }
+
+    .badge {
+        font-size: 0.75rem;
+    }
+</style>
+{% endblock %}
