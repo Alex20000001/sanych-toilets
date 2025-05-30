@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>Саныч - Умные туалеты города</title>
     
     <!-- Bootstrap CSS -->
@@ -283,67 +283,67 @@
             animation: fadeInUp 0.6s ease forwards;
         }
 
-        <style>
-/* Альтернативная волновая анимация - более заметная */
-.wave-bg {
-    position: relative;
-    overflow: hidden;
-}
+        /* Альтернативная волновая анимация - более заметная */
+        .wave-bg {
+            position: relative;
+            overflow: hidden;
+        }
 
-.wave-bg::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, 
-        transparent 30%, 
-        rgba(255,255,255,0.4) 50%, 
-        transparent 70%
-    );
-    animation: wave-sweep 4s linear infinite;
-    z-index: 1;
-    pointer-events: none;
-}
+        .wave-bg::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, 
+                transparent 30%, 
+                rgba(255,255,255,0.4) 50%, 
+                transparent 70%
+            );
+            animation: wave-sweep 4s linear infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
 
-@keyframes wave-sweep {
-    0% {
-        transform: translateX(-100%) translateY(-100%) rotate(45deg);
-    }
-    100% {
-        transform: translateX(100%) translateY(100%) rotate(45deg);
-    }
-}
+        @keyframes wave-sweep {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
+        }
 
-/* Или вариант с множественными волнами */
-.wave-bg::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: repeating-linear-gradient(
-        90deg,
-        transparent,
-        transparent 100px,
-        rgba(255,255,255,0.15) 100px,
-        rgba(255,255,255,0.15) 200px
-    );
-    animation: wave-move 20s linear infinite;
-    z-index: 1;
-    pointer-events: none;
-}
+        /* Или вариант с множественными волнами */
+        .wave-bg::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 100px,
+                rgba(255,255,255,0.15) 100px,
+                rgba(255,255,255,0.15) 200px
+            );
+            animation: wave-move 20s linear infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
 
-@keyframes wave-move {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(200px);
-    }
-}
+        @keyframes wave-move {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(200px);
+            }
+        }
+
         /* Анимация градиента для текста */
         .text-gradient-animated {
             background: linear-gradient(45deg, var(--primary-green), var(--dark-green), var(--primary-green));
@@ -423,6 +423,341 @@
         .icon-bounce {
             display: inline-block;
             animation: bounce 2s infinite;
+        }
+
+        /* МОБИЛЬНАЯ АДАПТАЦИЯ - ИСПРАВЛЕНИЯ */
+        
+        /* Глобальные исправления для мобильной версии */
+        html, body {
+            overflow-x: hidden !important;
+            width: 100%;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Контейнеры не должны выходить за границы */
+        .container, .container-fluid {
+            padding-left: 15px;
+            padding-right: 15px;
+            overflow-x: hidden;
+        }
+
+        /* Исправления для секций */
+        section {
+            overflow-x: hidden;
+        }
+
+        /* Исправления для hero секции */
+        .hero-section {
+            overflow: hidden;
+        }
+
+        /* ВАЖНО: Исправление волновой анимации для предотвращения горизонтального скролла */
+        .wave-bg {
+            position: relative;
+            overflow: hidden !important;
+        }
+
+        .wave-bg::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, 
+                transparent 30%, 
+                rgba(255,255,255,0.4) 50%, 
+                transparent 70%
+            );
+            animation: wave-sweep 4s linear infinite;
+            z-index: 1;
+            pointer-events: none;
+            /* Критично для предотвращения скролла */
+            transform-origin: center center;
+        }
+
+        .wave-bg::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 100px,
+                rgba(255,255,255,0.15) 100px,
+                rgba(255,255,255,0.15) 200px
+            );
+            animation: wave-move 20s linear infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Исправления для карточек */
+        .card-custom {
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        /* Мобильная адаптация */
+        @media (max-width: 768px) {
+            /* Оптимизация волновой анимации для мобильных */
+            .wave-bg::before {
+                width: 150%; /* Уменьшаем размер для производительности */
+                height: 150%;
+                animation-duration: 6s; /* Замедляем для плавности */
+            }
+            
+            .wave-bg::after {
+                animation-duration: 25s; /* Замедляем для плавности */
+            }
+            
+            /* Отключаем только ненужные анимации на мобильных */
+            .animate-float,
+            .animate-bounce,
+            .animate-pulse {
+                animation: none !important;
+            }
+            
+            /* Упрощаем hover эффекты */
+            .hover-lift:hover {
+                transform: none !important;
+            }
+            
+            /* Исправления для hero секции */
+            .hero-section {
+                padding: 2rem 0;
+                margin-top: -80px;
+                padding-top: 120px;
+            }
+            
+            .hero-section h1 {
+                font-size: 2rem !important;
+            }
+            
+            .hero-section .lead {
+                font-size: 1rem !important;
+            }
+            
+            /* Кнопки на мобильных */
+            .btn-primary-custom,
+            .btn-secondary-custom {
+                padding: 0.6rem 1.5rem;
+                font-size: 0.875rem;
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+            
+            /* Инфо-бокс */
+            .info-box {
+                margin-bottom: 1rem !important;
+            }
+            
+            /* Изображения */
+            img {
+                max-width: 100%;
+                height: auto;
+            }
+            
+            /* Навигация */
+            .navbar {
+                padding: 0.5rem 0;
+            }
+            
+            .navbar-brand {
+                font-size: 1.25rem;
+            }
+            
+            /* Карта и список туалетов */
+            #map {
+                height: 400px !important;
+                margin-bottom: 1rem;
+            }
+            
+            #toiletsList {
+                max-height: none !important;
+                margin-bottom: 2rem;
+            }
+            
+            /* Секция преимуществ */
+            .section-padding {
+                padding: 40px 0;
+            }
+            
+            /* Timeline для мобильных */
+            .timeline::before {
+                left: 20px;
+            }
+            
+            .timeline-marker {
+                left: 20px;
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+            
+            .timeline-content {
+                width: calc(100% - 60px);
+                margin-left: 60px !important;
+                padding: 1rem;
+            }
+            
+            /* Калькулятор прибыли */
+            .results-box .col-4 {
+                flex: 0 0 100%;
+                max-width: 100%;
+                margin-bottom: 1rem;
+            }
+            
+            /* Модальные окна */
+            .modal-dialog {
+                margin: 1rem;
+            }
+            
+            /* Значки и иконки */
+            .display-4 {
+                font-size: 2.5rem;
+            }
+            
+            /* Фильтры */
+            .filter-section .col-md-3 {
+                margin-bottom: 1rem;
+            }
+            
+            /* Партнерская секция - оставляем анимацию фона */
+            .particles-bg {
+                opacity: 0.5; /* Делаем менее заметной на мобильных */
+            }
+            
+            /* Убираем горизонтальные отступы */
+            .row {
+                margin-left: -10px;
+                margin-right: -10px;
+            }
+            
+            .row > * {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+            
+            /* Фиксим длинный текст */
+            h1, h2, h3, h4, h5, h6, p {
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+            
+            /* Таблицы на мобильных */
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            /* Фиксим позиционированные элементы */
+            .position-absolute {
+                position: static !important;
+            }
+            
+            /* Badge позиционирование */
+            .position-absolute.animate-float {
+                display: none;
+            }
+        }
+
+        /* Дополнительные исправления для очень маленьких экранов */
+        @media (max-width: 576px) {
+            .container {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+            
+            /* Еще больше оптимизируем волновую анимацию */
+            .wave-bg::before {
+                animation-duration: 8s;
+            }
+            
+            .wave-bg::after {
+                animation-duration: 30s;
+            }
+            
+            .btn-group-vertical > .btn {
+                width: 100%;
+            }
+            
+            /* Уменьшаем размеры шрифтов */
+            body {
+                font-size: 0.9rem;
+            }
+            
+            .display-5 {
+                font-size: 1.75rem;
+            }
+            
+            /* Карточки туалетов */
+            .toilet-card {
+                padding: 1rem;
+            }
+        }
+
+        /* Исправление для iOS Safari */
+        @supports (-webkit-touch-callout: none) {
+            body {
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .hero-section,
+            section {
+                -webkit-transform: translateZ(0);
+                transform: translateZ(0);
+            }
+        }
+
+        /* Убедимся, что ничего не выходит за границы viewport */
+        * {
+            max-width: 100vw;
+        }
+
+        /* Специальное исправление для элементов с волновой анимацией */
+        .wave-bg > * {
+            position: relative;
+            z-index: 2; /* Контент всегда поверх анимации */
+        }
+
+        /* Исправление для главной навигации на мобильных */
+        @media (max-width: 991px) {
+            .navbar-collapse {
+                background: rgba(255, 255, 255, 0.98);
+                margin-top: 1rem;
+                padding: 1rem;
+                border-radius: 8px;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            }
+            
+            .navbar-nav {
+                text-align: center;
+            }
+            
+            .navbar-nav .nav-link {
+                padding: 0.5rem 1rem;
+            }
+            
+            .navbar-nav .btn {
+                margin-top: 0.5rem;
+                width: 100%;
+            }
+        }
+
+        /* Дополнительная защита от горизонтального скролла */
+        .hero-section,
+        .section-padding,
+        .bg-light-custom {
+            max-width: 100%;
+            overflow-x: hidden;
         }
     </style>
     
